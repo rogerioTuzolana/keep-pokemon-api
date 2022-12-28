@@ -1,8 +1,9 @@
 const Pokemon = require("../models/Pokemon");
 const yup = require('yup');
+const { default: axios } = require("axios");
 
 class PokemonController{
-
+    
     async storePokemon(req, res){
         //Validacao com YUP schema dos dados a ser inseridos na base de dados
         let schema = yup.object().shape({
@@ -35,7 +36,54 @@ class PokemonController{
         })
     }
 
-    async getPokemons(req, res){
+    async getPokemon(req, res){
+        let url = 'https://pokeapi.co/api/v2/pokemon?offset=0&limit=1'
+        /*const next = null
+        const previous = null*/
+        if (req.body.next != null) {
+            url = req.body.next;
+        }
+        if (req.body.previous != null) {
+            url = req.body.previous;
+        }
+        const data = await axios
+        .get(url, { 
+            headers: { "Accept-Encoding": "gzip,deflate,compress" } 
+        })
+        .then(function(response){
+            return (response.data);
+        })
+        .catch(function (error) {
+            console.error(error);
+        })
+
+        const dataUrl = data.results[0].url
+        console.log(dataUrl);
+        console.log(data.results);
+
+        const dataPokemon =  await axios
+        .get(dataUrl, { 
+            headers: { "Accept-Encoding": "gzip,deflate,compress" } 
+        })
+        .then(function(response){
+            return (response.data);
+        })
+        .catch(function (error) {
+            console.error(error);
+        })
+        
+        //console.log(url2);
+        res.status(200).json({
+            error: false,
+            name: data.results[0].name,
+            next: data.next,
+            previous: data.previous,
+            //url,
+            dataPokemon: dataPokemon
+        });
+    }
+
+    async myPokemons(req, res){
         //console.log(req.user_id);
         const pokemons = await Pokemon.find();
         if (!pokemons) {

@@ -18,16 +18,6 @@ class UserController{
     }
 
     async show(req, res){
-        await axios
-        .get('https://pokeapi.co/api/v2/pokemon', { 
-            headers: { "Accept-Encoding": "gzip,deflate,compress" } 
-        })
-        .then(function(response){
-            console.log(response.data.results);
-        })
-        .catch(function (error) {
-            console.error(error);
-        })
         const auth = req.headers.authorization;
         if (!auth) {
             return res.status(401).json({

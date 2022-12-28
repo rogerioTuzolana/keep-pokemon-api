@@ -13,7 +13,8 @@ routes.post('/insertUser', UserController.store);
 routes.post('/login', LoginController.index);
 routes.post('/insertPokemon', AuthMiddleware, PokemonController.storePokemon);
 routes.get('/users', AuthMiddleware, UserController.show);
-routes.get('/myPokemons', AuthMiddleware, PokemonController.getPokemons);
+routes.get('/myPokemons', AuthMiddleware, PokemonController.myPokemons);
+routes.get('/getPokemon', AuthMiddleware, PokemonController.getPokemon);
 
 
 //------

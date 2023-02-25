@@ -8,7 +8,8 @@ class PokemonController{
         //Validacao com YUP schema dos dados a ser inseridos na base de dados
         let schema = yup.object().shape({
             name: yup.string().required(),    
-            pokemon_id: yup.string().required(),    
+            pokemonId: yup.string().required(),
+            //user:  yup.string().required(),
         });
 
         if(!(await schema.isValid(req.body))){
@@ -17,16 +18,17 @@ class PokemonController{
                     message: "Dados inválidos!"
             })
         }
-        
-        const {name, pokemon_id} = req.body;
-        const data = {name,pokemon_id}
+        const userId = req.userId;
+        console.log(userId);
+        const {name, pokemonId} = req.body;
+        const data = {name,pokemonId}
         
         //Inserir dados na collection
-        await Pokemon.create(data, (err)=>{
+        await Pokemon.create({...data,user: userId}, (err)=>{
             if (err) {
                 return res.status(400).json({
                     error: true,
-                    message: "Erro ao tentar cadastrar pokemon!"
+                    message: "Erro ao tentar cadastrar pokemon!"+err
                 });
             }
             return res.status(200).json({
@@ -85,7 +87,7 @@ class PokemonController{
 
     async myPokemons(req, res){
         //console.log(req.user_id);
-        const pokemons = await Pokemon.find();
+        const pokemons = await Pokemon.find().populate('user');
         if (!pokemons) {
             return res.status(400).json({
                 error: true,

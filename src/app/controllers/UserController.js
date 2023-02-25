@@ -40,7 +40,7 @@ class UserController{
             
             return decoded;
         })
-        
+        console.log(req.userId);
         console.log(auth2);
         console.log(await auth3(req,res));
         
